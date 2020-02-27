@@ -77,8 +77,9 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.updateEnabledStateByIntegrationTypeId(true, integrationType.getId());
 
-		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
+		List<Integration> enabledAfter = integrationRepository.findAllByProjectIdAndTypeId(DEFAULT_PERSONAL_PROJECT_ID, integrationType.getId());
 
+		assertFalse(enabledAfter.isEmpty());
 		enabledAfter.forEach(integration -> assertTrue(integration.isEnabled()));
 	}
 
@@ -87,9 +88,9 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(JIRA_INTEGRATION_TYPE_ID).get();
 
-		List<Integration> integrations = integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType);
+		List<Integration> integrations = integrationRepository.findAllByProjectIdAndTypeId(DEFAULT_PERSONAL_PROJECT_ID, integrationType.getId());
 
-		assertNotNull(integrations);
+		assertFalse(integrations.isEmpty());
 		assertEquals(1L, integrations.size());
 	}
 
@@ -100,10 +101,10 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.deleteAllGlobalByIntegrationTypeId(integrationType.getId());
 
-		assertThat(integrationRepository.findAllGlobalByType(integrationType), is(empty()));
+		assertThat(integrationRepository.findAllGlobalByTypeId(integrationType.getId()), is(empty()));
 
-		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
-		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeId(DEFAULT_PERSONAL_PROJECT_ID, integrationType.getId()), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeId(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType.getId()), is(not(empty())));
 	}
 
 	@Test
@@ -113,8 +114,8 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		integrationRepository.deleteAllByProjectIdAndIntegrationTypeId(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType.getId());
 
-		assertThat(integrationRepository.findAllByProjectIdAndType(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType), is(empty()));
-		assertThat(integrationRepository.findAllByProjectIdAndType(DEFAULT_PERSONAL_PROJECT_ID, integrationType), is(not(empty())));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeId(SUPERADMIN_PERSONAL_PROJECT_ID, integrationType.getId()), is(empty()));
+		assertThat(integrationRepository.findAllByProjectIdAndTypeId(DEFAULT_PERSONAL_PROJECT_ID, integrationType.getId()), is(not(empty())));
 	}
 
 	@Test
@@ -159,7 +160,7 @@ class IntegrationRepositoryTest extends BaseTest {
 	void findAllProjectByIntegrationGroup() {
 		Project project = new Project();
 		project.setId(1L);
-		List<Integration> integrations = integrationRepository.findAllProjectByGroup(project, IntegrationGroupEnum.BTS);
+		List<Integration> integrations = integrationRepository.findAllProjectByProjectIdAndGroup(project.getId(), IntegrationGroupEnum.BTS);
 		assertThat(integrations, hasSize(4));
 	}
 
@@ -168,7 +169,7 @@ class IntegrationRepositoryTest extends BaseTest {
 
 		IntegrationType integrationType = integrationTypeRepository.findById(2L).get();
 
-		List<Integration> globalEmailIntegrations = integrationRepository.findAllGlobalByType(integrationType);
+		List<Integration> globalEmailIntegrations = integrationRepository.findAllGlobalByTypeId(integrationType.getId());
 
 		assertNotNull(globalEmailIntegrations);
 		assertEquals(GLOBAL_EMAIL_INTEGRATIONS_COUNT, globalEmailIntegrations.size());

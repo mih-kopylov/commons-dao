@@ -56,16 +56,16 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	/**
 	 * Retrieve all {@link Integration} by project ID and integration type
 	 *
-	 * @param projectId       {@link com.epam.ta.reportportal.entity.project.Project#id}
-	 * @param integrationType {@link IntegrationType}
+	 * @param projectId {@link Integration#getProject()} ID
+	 * @param typeId    {@link Integration#getType()} ID
 	 * @return The {@link List} of the {@link Integration}
 	 */
-	List<Integration> findAllByProjectIdAndType(Long projectId, IntegrationType integrationType);
+	List<Integration> findAllByProjectIdAndTypeId(Long projectId, Long typeId);
 
 	/**
-	 * Delete all {@link Integration} with {@link Integration#project} == NULL by integration type ID
+	 * Delete all {@link Integration} with {@link Integration#getProject()} == `NULL` by integration type ID
 	 *
-	 * @param typeId {@link IntegrationType#id}
+	 * @param typeId {@link IntegrationType#getId()}
 	 */
 	@Modifying
 	@Query(value = "DELETE FROM integration WHERE project_id IS NULL AND type = :typeId", nativeQuery = true)
@@ -74,42 +74,42 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	/**
 	 * Delete all {@link Integration} by projectID and integration type ID
 	 *
-	 * @param typeId {@link IntegrationType#id}
+	 * @param typeId {@link IntegrationType#getId()}
 	 */
 	@Modifying
 	@Query(value = "DELETE FROM integration WHERE project_id = :projectId AND type = :typeId", nativeQuery = true)
 	int deleteAllByProjectIdAndIntegrationTypeId(@Param("projectId") Long projectId, @Param("typeId") Long typeId);
 
 	/**
-	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration type
+	 * Retrieve all {@link Integration} with {@link Integration#getProject()} == `NULL` by {@link IntegrationType#getId()}
 	 *
-	 * @param integrationType {@link Integration#type}
+	 * @param typeId {@link Integration#getType()} ID
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i WHERE i.project IS NULL AND i.type = :integrationType")
-	List<Integration> findAllGlobalByType(@Param("integrationType") IntegrationType integrationType);
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.id = :typeId")
+	List<Integration> findAllGlobalByTypeId(@Param("typeId") Long typeId);
 
 	/**
-	 * Retrieve all {@link Integration} with {@link Integration#project} by integration group
+	 * Retrieve all {@link Integration} with {@link Integration#getProject()} != `NULL` by integration group
 	 *
-	 * @param integrationGroup {@link IntegrationType#integrationGroup}
+	 * @param integrationGroup {@link IntegrationType#getIntegrationGroup()}
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
-	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project = :project AND t.integrationGroup = :integrationGroup")
-	List<Integration> findAllProjectByGroup(@Param("project") Project project,
+	@Query(value = "SELECT i FROM Integration i JOIN i.type t JOIN i.project p WHERE p.id = :projectId AND t.integrationGroup = :integrationGroup")
+	List<Integration> findAllProjectByProjectIdAndGroup(@Param("projectId") Long projectId,
 			@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
 	/**
-	 * Retrieve all {@link Integration} with {@link Integration#project} == null by integration group
+	 * Retrieve all {@link Integration} with {@link Integration#getProject()} == `NULL` by integration group
 	 *
-	 * @param integrationGroup {@link IntegrationType#integrationGroup}
+	 * @param integrationGroup {@link IntegrationType#getIntegrationGroup()}
 	 * @return @return The {@link List} of the {@link Integration}
 	 */
 	@Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.integrationGroup = :integrationGroup")
 	List<Integration> findAllGlobalByGroup(@Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
 	/**
-	 * Retrieve all {@link Integration} with {@link Integration#project} == null
+	 * Retrieve all {@link Integration} with {@link Integration#getProject()} == `NULL`
 	 *
 	 * @return @return The {@link List} of the global {@link Integration}
 	 */
@@ -121,7 +121,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	 *
 	 * @param url        Bug Tracking System url
 	 * @param btsProject Bug Tracking System project name
-	 * @param projectId  {@link com.epam.ta.reportportal.entity.project.Project#id}
+	 * @param projectId  {@link Project#getId()}
 	 * @return The {@link Integration} wrapped in the {@link Optional}
 	 */
 	@Query(value =
@@ -132,7 +132,7 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 			@Param("projectId") Long projectId);
 
 	/**
-	 * Find BTS integration by BTS url, BTS project name and {@link Integration#project} == null
+	 * Find BTS integration by BTS url, BTS project name and {@link Integration#getProject()} == `NULL`
 	 *
 	 * @param url        Bug Tracking System url
 	 * @param btsProject Bug Tracking System project name
@@ -144,20 +144,20 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
 	Optional<Integration> findGlobalBtsByUrlAndLinkedProject(@Param("url") String url, @Param("btsProject") String btsProject);
 
 	/**
-	 * Update {@link Integration#enabled} by integration ID
+	 * Update {@link Integration#isEnabled()} by integration ID
 	 *
 	 * @param enabled       Enabled state flag
-	 * @param integrationId {@link Integration#id}
+	 * @param integrationId {@link Integration#getId()}
 	 */
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE id = :integrationId", nativeQuery = true)
 	void updateEnabledStateById(@Param("enabled") boolean enabled, @Param("integrationId") Long integrationId);
 
 	/**
-	 * Update {@link Integration#enabled} of all integrations by integration type id
+	 * Update {@link Integration#isEnabled()} of all integrations by integration type id
 	 *
 	 * @param enabled           Enabled state flag
-	 * @param integrationTypeId {@link IntegrationType#id}
+	 * @param integrationTypeId {@link IntegrationType#getId()}
 	 */
 	@Modifying
 	@Query(value = "UPDATE integration SET enabled = :enabled WHERE type = :integrationTypeId", nativeQuery = true)

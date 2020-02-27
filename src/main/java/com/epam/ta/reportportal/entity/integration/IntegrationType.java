@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.integration;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.google.common.collect.Sets;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,7 +27,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 /**
  * @author Yauheni_Martynau
@@ -68,9 +66,6 @@ public class IntegrationType implements Serializable {
 	@Type(type = "details")
 	@Column(name = "details")
 	private IntegrationTypeDetails details;
-
-	@OneToMany(mappedBy = "type", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Integration> integrations = Sets.newHashSet();
 
 	public Long getId() {
 		return id;
@@ -128,11 +123,4 @@ public class IntegrationType implements Serializable {
 		this.details = details;
 	}
 
-	public Set<Integration> getIntegrations() {
-		return integrations;
-	}
-
-	public void setIntegrations(Set<Integration> integrations) {
-		this.integrations = integrations;
-	}
 }
