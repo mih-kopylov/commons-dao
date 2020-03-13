@@ -26,10 +26,10 @@ import java.io.Serializable;
 @Embeddable
 public class Parameter implements Serializable {
 
-	@Column(name = "key")
+	@Column(name = "key", length = Integer.MAX_VALUE)
 	private String key;
 
-	@Column(name = "value")
+	@Column(name = "value", length = Integer.MAX_VALUE)
 	private String value;
 
 	public Parameter() {
