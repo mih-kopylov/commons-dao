@@ -102,7 +102,7 @@ public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 		try {
 			return new BinaryData((String) user.getMetadata().getMetadata().get(ATTACHMENT_CONTENT_TYPE), (long) data.available(), data);
 		} catch (IOException e) {
-			LOGGER.error("Unable to load user photo", e);
+//			LOGGER.error("Unable to load user photo", e);
 			throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Unable to load user photo");
 		}
 	}
