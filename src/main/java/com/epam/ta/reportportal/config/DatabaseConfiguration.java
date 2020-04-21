@@ -93,10 +93,10 @@ public class DatabaseConfiguration {
 
 	@Bean
 	@Primary
-	public PlatformTransactionManager transactionManager() {
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactory());
-		return transactionManager;
+	public PlatformTransactionManager platformTransactionManager() {
+		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
+		return jpaTransactionManager;
 	}
 
 	@Bean
